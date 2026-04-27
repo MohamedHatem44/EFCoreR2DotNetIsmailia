@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Day02.Project.Models
 {
+    // Domain Model
     public class Instructor
     {
         /*------------------------------------------------------------------*/
@@ -13,7 +14,7 @@ namespace Day02.Project.Models
 
         [Required]
         [MaxLength(50)]
-        [MinLength(50)]
+        [MinLength(3)] // Data Annotation for Validation
         public string Ins_Name { get; set; }
 
         [Required]
@@ -30,14 +31,16 @@ namespace Day02.Project.Models
         [EmailAddress]
         public string Email { get; set; }
         /*------------------------------------------------------------------*/
+        public bool IsDeleted { get; set; }
+        /*------------------------------------------------------------------*/
         // Not in DB
         [NotMapped]
         public int NoOfCourses { get; set; }
         /*------------------------------------------------------------------*/
         // Relation With Department
         [ForeignKey("Department")]
-        public int DeptId { get; set; }
-        public Department Department { get; set; }
+        public int? DeptId { get; set; }
+        public Department? Department { get; set; }
         /*------------------------------------------------------------------*/
         // Relation With Courses
         public ICollection<Course> Courses { get; set; }

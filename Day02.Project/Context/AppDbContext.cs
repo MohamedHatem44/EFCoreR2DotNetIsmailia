@@ -1,6 +1,7 @@
 ﻿using Day02.Project.Configuration;
 using Day02.Project.Models;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Day02.Project.Context
 {
@@ -52,7 +53,27 @@ namespace Day02.Project.Context
             //modelBuilder.ApplyConfiguration(new StudentConfiguration());
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
+            modelBuilder.Entity<Instructor>().HasQueryFilter(i => !i.IsDeleted);
+
             base.OnModelCreating(modelBuilder);
+        }
+        /*------------------------------------------------------------------*/
+        // int => Number of Rows Affected
+        public override int SaveChanges()
+        {
+            // Before Save Validation
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity);
+
+            foreach (var item in entries)
+            {
+                var validationContext = new ValidationContext(item);
+                Validator.ValidateObject(item, validationContext, true);
+            }
+
+            // Keep
+            return base.SaveChanges();
         }
         /*------------------------------------------------------------------*/
         public DbSet<Car> Cars { get; set; }
@@ -64,3 +85,15 @@ namespace Day02.Project.Context
         /*------------------------------------------------------------------*/
     }
 }
+
+// OwnedEntity
+// CreatedOn : 2024-06-26 17:30
+// ModifiedOn : 2024-06-26 17:30
+// CreatedBy
+// ModifiedBy
+
+// DeletedOn
+
+// LastPPChangedOn
+// LastPasswordChangedOn
+// LastLoginDate
